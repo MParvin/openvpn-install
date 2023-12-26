@@ -1058,24 +1058,6 @@ verb 3" >>/etc/openvpn/client-template.txt
 }
 
 function newClient() {
-	echo ""
-	echo "Tell me a name for the client."
-	echo "The name must consist of alphanumeric character. It may also include an underscore or a dash."
-
-	until [[ $CLIENT =~ ^[a-zA-Z0-9_-]+$ ]]; do
-		read -rp "Client name: " -e CLIENT
-	done
-
-	echo ""
-	echo "Do you want to protect the configuration file with a password?"
-	echo "(e.g. encrypt the private key with a password)"
-	echo "   1) Add a passwordless client"
-	echo "   2) Use a password for the client"
-
-	until [[ $PASS =~ ^[1-2]$ ]]; do
-		read -rp "Select an option [1-2]: " -e -i 1 PASS
-	done
-
 	CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
 	if [[ $CLIENTEXISTS == '1' ]]; then
 		echo ""
@@ -1083,15 +1065,7 @@ function newClient() {
 		exit
 	else
 		cd /etc/openvpn/easy-rsa/ || return
-		case $PASS in
-		1)
-			./easyrsa --batch build-client-full "$CLIENT" nopass
-			;;
-		2)
-			echo "⚠️ You will be asked for the client password below ⚠️"
-			./easyrsa --batch build-client-full "$CLIENT"
-			;;
-		esac
+		./easyrsa --batch build-client-full "$CLIENT" nopass
 		echo "Client $CLIENT added."
 	fi
 
@@ -1333,12 +1307,29 @@ function manageMenu() {
 	esac
 }
 
+function handleParams() {
+	action=$1
+	client=$2
+
+	if [[ $action == "add" ]]; then
+		export CLIENT=$client
+		newClient
+	elif [[ $action == "revoke" ]]; then
+		export CLIENT=$client
+		revokeClient
+	elif [[ $action == "remove" ]]; then
+		removeOpenVPN
+	else
+		manageMenu
+	fi
+}
+
 # Check for root, TUN, OS...
 initialCheck
 
 # Check if OpenVPN is already installed
 if [[ -e /etc/openvpn/server.conf && $AUTO_INSTALL != "y" ]]; then
-	manageMenu
+	handleParams $1 $2
 else
 	installOpenVPN
 fi
