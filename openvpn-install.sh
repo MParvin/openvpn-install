@@ -1062,10 +1062,10 @@ function newClient() {
 	if [[ $CLIENTEXISTS == '1' ]]; then
 
 		echo "The specified client CN was already found in easy-rsa, please choose another name."
-		exit
+		exit 1
 	else
 		cd /etc/openvpn/easy-rsa/ || return
-		./easyrsa --batch build-client-full "$CLIENT" nopass
+		./easyrsa --batch build-client-full "$CLIENT" nopass 1>/dev/null 2>&1
 	fi
 
 	# Home directory of the user, where the client configuration will be written
