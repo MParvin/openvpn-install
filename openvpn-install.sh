@@ -727,28 +727,28 @@ function installOpenVPN() {
 		SERVER_CN="cn_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
 		echo "$SERVER_CN" >SERVER_CN_GENERATED
 		SERVER_NAME="server_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
-		echo "$SERVER_NAME" >SERVER_NAME_GENERATED
+		echo "$SERVER_NAME" >SERVER_NAME_GENERATED 
 
 		# Create the PKI, set up the CA, the DH params and the server certificate
-		./easyrsa init-pki
-		./easyrsa --batch --req-cn="$SERVER_CN" build-ca nopass
+		./easyrsa init-pki 1>/dev/null 2>&1
+		./easyrsa --batch --req-cn="$SERVER_CN" build-ca nopass 1>/dev/null 2>&1
 
 		if [[ $DH_TYPE == "2" ]]; then
 			# ECDH keys are generated on-the-fly so we don't need to generate them beforehand
 			openssl dhparam -out dh.pem $DH_KEY_SIZE 1>/dev/null 2>&1
 		fi
 
-		./easyrsa --batch build-server-full "$SERVER_NAME" nopass
-		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+		./easyrsa --batch build-server-full "$SERVER_NAME" nopass 1>/dev/null 2>&1
+		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl 1>/dev/null 2>&1
 
 		case $TLS_SIG in
 		1)
 			# Generate tls-crypt key
-			openvpn --genkey --secret /etc/openvpn/tls-crypt.key
+			openvpn --genkey --secret /etc/openvpn/tls-crypt.key 1>/dev/null 2>&1
 			;;
 		2)
 			# Generate tls-auth key
-			openvpn --genkey --secret /etc/openvpn/tls-auth.key
+			openvpn --genkey --secret /etc/openvpn/tls-auth.key 1>/dev/nul 2>&1
 			;;
 		esac
 	else
