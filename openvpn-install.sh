@@ -1318,7 +1318,7 @@ function handleParams() {
 		newClient
 	elif [[ $action == "revoke" ]]; then
 		export CLIENT=$client
-		revokeClient
+		revokeClient $client
 	elif [[ $action == "remove" ]]; then
 		removeOpenVPN
 	else
