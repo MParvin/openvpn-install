@@ -1128,6 +1128,10 @@ function newClient() {
 	exit 0
 }
 
+function listClients() {
+	tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
+}
+
 function revokeClient() {
 	if [[ -z $1 ]]; then
 		NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
@@ -1139,7 +1143,7 @@ function revokeClient() {
 
 
 		echo "Select the existing client certificate you want to revoke"
-		tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
+		listClients
 		until [[ $CLIENTNUMBER -ge 1 && $CLIENTNUMBER -le $NUMBEROFCLIENTS ]]; do
 			if [[ $CLIENTNUMBER == '1' ]]; then
 				read -rp "Select one client [1]: " CLIENTNUMBER
@@ -1321,6 +1325,8 @@ function handleParams() {
 		revokeClient $client
 	elif [[ $action == "remove" ]]; then
 		removeOpenVPN
+	elif [[ $action == "list"]]; then
+		listClients
 	else
 		manageMenu
 	fi
