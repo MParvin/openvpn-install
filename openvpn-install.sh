@@ -1325,7 +1325,7 @@ function handleParams() {
 		revokeClient $client
 	elif [[ $action == "remove" ]]; then
 		removeOpenVPN
-	elif [[ $action == "list"]]; then
+	elif [[ $action == "list" ]]; then
 		listClients
 	else
 		manageMenu
