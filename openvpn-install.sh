@@ -1066,7 +1066,6 @@ function newClient() {
 	else
 		cd /etc/openvpn/easy-rsa/ || return
 		./easyrsa --batch build-client-full "$CLIENT" nopass
-		echo "Client $CLIENT added."
 	fi
 
 	# Home directory of the user, where the client configuration will be written
@@ -1124,8 +1123,7 @@ function newClient() {
 	} >>"$homeDir/$CLIENT.ovpn"
 
 	echo ""
-	echo "The configuration file has been written to $homeDir/$CLIENT.ovpn."
-	echo "Download the .ovpn file and import it in your OpenVPN client."
+	echo "$homeDir/$CLIENT.ovpn"
 
 	exit 0
 }
