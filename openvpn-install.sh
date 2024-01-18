@@ -24,9 +24,9 @@ function checkOS() {
 		if [[ $ID == "debian" || $ID == "raspbian" ]]; then
 			if [[ $VERSION_ID -lt 9 ]]; then
 				echo "⚠️ Your version of Debian is not supported."
-				echo ""
+
 				echo "However, if you're using Debian >= 9 or unstable/testing then you can continue, at your own risk."
-				echo ""
+
 				until [[ $CONTINUE =~ (y|n) ]]; do
 					read -rp "Continue? [y/n]: " -e CONTINUE
 				done
@@ -39,9 +39,9 @@ function checkOS() {
 			MAJOR_UBUNTU_VERSION=$(echo "$VERSION_ID" | cut -d '.' -f1)
 			if [[ $MAJOR_UBUNTU_VERSION -lt 16 ]]; then
 				echo "⚠️ Your version of Ubuntu is not supported."
-				echo ""
+
 				echo "However, if you're using Ubuntu >= 16.04 or beta, then you can continue, at your own risk."
-				echo ""
+
 				until [[ $CONTINUE =~ (y|n) ]]; do
 					read -rp "Continue? [y/n]: " -e CONTINUE
 				done
@@ -59,9 +59,9 @@ function checkOS() {
 			OS="centos"
 			if [[ ${VERSION_ID%.*} -lt 7 ]]; then
 				echo "⚠️ Your version of CentOS is not supported."
-				echo ""
+
 				echo "The script only support CentOS 7 and CentOS 8."
-				echo ""
+
 				exit 1
 			fi
 		fi
@@ -69,7 +69,7 @@ function checkOS() {
 			OS="oracle"
 			if [[ ! $VERSION_ID =~ (8) ]]; then
 				echo "Your version of Oracle Linux is not supported."
-				echo ""
+
 				echo "The script only support Oracle Linux 8."
 				exit 1
 			fi
@@ -78,9 +78,9 @@ function checkOS() {
 			OS="amzn"
 			if [[ $VERSION_ID != "2" ]]; then
 				echo "⚠️ Your version of Amazon Linux is not supported."
-				echo ""
+
 				echo "The script only support Amazon Linux 2."
-				echo ""
+
 				exit 1
 			fi
 		fi
@@ -219,11 +219,11 @@ access-control: fd42:42:42:42::/112 allow' >>/etc/unbound/openvpn.conf
 function installQuestions() {
 	echo "Welcome to the OpenVPN installer!"
 	echo "The git repository is available at: https://github.com/angristan/openvpn-install"
-	echo ""
+
 
 	echo "I need to ask you a few questions before starting the setup."
 	echo "You can leave the default options and just press enter if you are ok with them."
-	echo ""
+
 	echo "I need to know the IPv4 address of the network interface you want OpenVPN listening to."
 	echo "Unless your server is behind NAT, it should be your public IPv4 address."
 
@@ -240,7 +240,7 @@ function installQuestions() {
 	fi
 	# If $IP is a private IP address, the server must be behind NAT
 	if echo "$IP" | grep -qE '^(10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.|192\.168)'; then
-		echo ""
+
 		echo "It seems this server is behind NAT. What is its public IPv4 address or hostname?"
 		echo "We need it for the clients to connect to the server."
 
@@ -250,9 +250,9 @@ function installQuestions() {
 		done
 	fi
 
-	echo ""
+
 	echo "Checking for IPv6 connectivity..."
-	echo ""
+
 	# "ping6" and "ping -6" availability varies depending on the distribution
 	if type ping6 >/dev/null 2>&1; then
 		PING6="ping6 -c3 ipv6.google.com > /dev/null 2>&1"
@@ -266,12 +266,12 @@ function installQuestions() {
 		echo "Your host does not appear to have IPv6 connectivity."
 		SUGGESTION="n"
 	fi
-	echo ""
+
 	# Ask the user if they want to enable IPv6 regardless its availability.
 	until [[ $IPV6_SUPPORT =~ (y|n) ]]; do
 		read -rp "Do you want to enable IPv6 support (NAT)? [y/n]: " -e -i $SUGGESTION IPV6_SUPPORT
 	done
-	echo ""
+
 	echo "What port do you want OpenVPN to listen to?"
 	echo "   1) Default: 1194"
 	echo "   2) Custom"
@@ -294,7 +294,7 @@ function installQuestions() {
 		echo "Random Port: $PORT"
 		;;
 	esac
-	echo ""
+
 	echo "What protocol do you want OpenVPN to use?"
 	echo "UDP is faster. Unless it is not available, you shouldn't use TCP."
 	echo "   1) UDP"
@@ -310,7 +310,7 @@ function installQuestions() {
 		PROTOCOL="tcp"
 		;;
 	esac
-	echo ""
+
 	echo "What DNS resolvers do you want to use with the VPN?"
 	echo "   1) Current system resolvers (from /etc/resolv.conf)"
 	echo "   2) Self-hosted DNS Resolver (Unbound)"
@@ -328,12 +328,12 @@ function installQuestions() {
 	until [[ $DNS =~ ^[0-9]+$ ]] && [ "$DNS" -ge 1 ] && [ "$DNS" -le 13 ]; do
 		read -rp "DNS [1-12]: " -e -i 11 DNS
 		if [[ $DNS == 2 ]] && [[ -e /etc/unbound/unbound.conf ]]; then
-			echo ""
+
 			echo "Unbound is already installed."
 			echo "You can allow the script to configure it in order to use it from your OpenVPN clients"
 			echo "We will simply add a second server to /etc/unbound/unbound.conf for the OpenVPN subnet."
 			echo "No changes are made to the current configuration."
-			echo ""
+
 
 			until [[ $CONTINUE =~ (y|n) ]]; do
 				read -rp "Apply configuration changes to Unbound? [y/n]: " -e CONTINUE
@@ -355,7 +355,7 @@ function installQuestions() {
 			done
 		fi
 	done
-	echo ""
+
 	echo "Do you want to use compression? It is not recommended since the VORACLE attack makes use of it."
 	until [[ $COMPRESSION_ENABLED =~ (y|n) ]]; do
 		read -rp"Enable compression? [y/n]: " -e -i n COMPRESSION_ENABLED
@@ -380,12 +380,12 @@ function installQuestions() {
 			;;
 		esac
 	fi
-	echo ""
+
 	echo "Do you want to customize encryption settings?"
 	echo "Unless you know what you're doing, you should stick with the default parameters provided by the script."
 	echo "Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN's defaults)"
 	echo "See https://github.com/angristan/openvpn-install#security-and-encryption to learn more."
-	echo ""
+
 	until [[ $CUSTOMIZE_ENC =~ (y|n) ]]; do
 		read -rp "Customize encryption settings? [y/n]: " -e -i n CUSTOMIZE_ENC
 	done
@@ -400,7 +400,7 @@ function installQuestions() {
 		HMAC_ALG="SHA256"
 		TLS_SIG="1" # tls-crypt
 	else
-		echo ""
+
 		echo "Choose which cipher you want to use for the data channel:"
 		echo "   1) AES-128-GCM (recommended)"
 		echo "   2) AES-192-GCM"
@@ -431,7 +431,7 @@ function installQuestions() {
 			CIPHER="AES-256-CBC"
 			;;
 		esac
-		echo ""
+
 		echo "Choose what kind of certificate you want to use:"
 		echo "   1) ECDSA (recommended)"
 		echo "   2) RSA"
@@ -440,7 +440,7 @@ function installQuestions() {
 		done
 		case $CERT_TYPE in
 		1)
-			echo ""
+
 			echo "Choose which curve you want to use for the certificate's key:"
 			echo "   1) prime256v1 (recommended)"
 			echo "   2) secp384r1"
@@ -461,7 +461,7 @@ function installQuestions() {
 			esac
 			;;
 		2)
-			echo ""
+
 			echo "Choose which size you want to use for the certificate's RSA key:"
 			echo "   1) 2048 bits (recommended)"
 			echo "   2) 3072 bits"
@@ -482,7 +482,7 @@ function installQuestions() {
 			esac
 			;;
 		esac
-		echo ""
+
 		echo "Choose which cipher you want to use for the control channel:"
 		case $CERT_TYPE in
 		1)
@@ -516,7 +516,7 @@ function installQuestions() {
 			esac
 			;;
 		esac
-		echo ""
+
 		echo "Choose what kind of Diffie-Hellman key you want to use:"
 		echo "   1) ECDH (recommended)"
 		echo "   2) DH"
@@ -525,7 +525,7 @@ function installQuestions() {
 		done
 		case $DH_TYPE in
 		1)
-			echo ""
+
 			echo "Choose which curve you want to use for the ECDH key:"
 			echo "   1) prime256v1 (recommended)"
 			echo "   2) secp384r1"
@@ -546,7 +546,7 @@ function installQuestions() {
 			esac
 			;;
 		2)
-			echo ""
+
 			echo "Choose what size of Diffie-Hellman key you want to use:"
 			echo "   1) 2048 bits (recommended)"
 			echo "   2) 3072 bits"
@@ -567,7 +567,7 @@ function installQuestions() {
 			esac
 			;;
 		esac
-		echo ""
+
 		# The "auth" options behaves differently with AEAD ciphers
 		if [[ $CIPHER =~ CBC$ ]]; then
 			echo "The digest algorithm authenticates data channel packets and tls-auth packets from the control channel."
@@ -592,7 +592,7 @@ function installQuestions() {
 			HMAC_ALG="SHA512"
 			;;
 		esac
-		echo ""
+
 		echo "You can add an additional layer of security to the control channel with tls-auth and tls-crypt"
 		echo "tls-auth authenticates the packets, while tls-crypt authenticate and encrypt them."
 		echo "   1) tls-crypt (recommended)"
@@ -601,7 +601,7 @@ function installQuestions() {
 			read -rp "Control channel additional security mechanism [1-2]: " -e -i 1 TLS_SIG
 		done
 	fi
-	echo ""
+
 	echo "Okay, that was all I needed. We are ready to setup your OpenVPN server now."
 	echo "You will be able to generate a client at the end of the installation."
 	APPROVE_INSTALL=${APPROVE_INSTALL:-n}
@@ -1060,7 +1060,7 @@ verb 3" >>/etc/openvpn/client-template.txt
 function newClient() {
 	CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
 	if [[ $CLIENTEXISTS == '1' ]]; then
-		echo ""
+
 		echo "The specified client CN was already found in easy-rsa, please choose another name."
 		exit
 	else
@@ -1122,7 +1122,7 @@ function newClient() {
 		esac
 	} >>"$homeDir/$CLIENT.ovpn"
 
-	echo ""
+
 	echo "$homeDir/$CLIENT.ovpn"
 
 	exit 0
@@ -1131,12 +1131,12 @@ function newClient() {
 function revokeClient() {
 	NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
 	if [[ $NUMBEROFCLIENTS == '0' ]]; then
-		echo ""
+
 		echo "You have no existing clients!"
 		exit 1
 	fi
 
-	echo ""
+
 	echo "Select the existing client certificate you want to revoke"
 	tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
 	until [[ $CLIENTNUMBER -ge 1 && $CLIENTNUMBER -le $NUMBEROFCLIENTS ]]; do
@@ -1158,7 +1158,7 @@ function revokeClient() {
 	sed -i "/^$CLIENT,.*/d" /etc/openvpn/ipp.txt
 	cp /etc/openvpn/easy-rsa/pki/index.txt{,.bk}
 
-	echo ""
+
 	echo "Certificate for client $CLIENT revoked."
 }
 
@@ -1168,7 +1168,7 @@ function removeUnbound() {
 	rm /etc/unbound/openvpn.conf
 
 	until [[ $REMOVE_UNBOUND =~ (y|n) ]]; do
-		echo ""
+
 		echo "If you were already using Unbound before installing OpenVPN, I removed the configuration related to OpenVPN."
 		read -rp "Do you want to completely remove Unbound? [y/n]: " -e REMOVE_UNBOUND
 	done
@@ -1189,17 +1189,17 @@ function removeUnbound() {
 
 		rm -rf /etc/unbound/
 
-		echo ""
+
 		echo "Unbound removed!"
 	else
 		systemctl restart unbound
-		echo ""
+
 		echo "Unbound wasn't removed."
 	fi
 }
 
 function removeOpenVPN() {
-	echo ""
+
 	read -rp "Do you really want to remove OpenVPN? [y/n]: " -e -i n REMOVE
 	if [[ $REMOVE == 'y' ]]; then
 		# Get OpenVPN port from the configuration
@@ -1266,10 +1266,10 @@ function removeOpenVPN() {
 		if [[ -e /etc/unbound/openvpn.conf ]]; then
 			removeUnbound
 		fi
-		echo ""
+
 		echo "OpenVPN removed!"
 	else
-		echo ""
+
 		echo "Removal aborted!"
 	fi
 }
@@ -1277,9 +1277,9 @@ function removeOpenVPN() {
 function manageMenu() {
 	echo "Welcome to OpenVPN-install!"
 	echo "The git repository is available at: https://github.com/angristan/openvpn-install"
-	echo ""
+
 	echo "It looks like OpenVPN is already installed."
-	echo ""
+
 	echo "What do you want to do?"
 	echo "   1) Add a new user"
 	echo "   2) Revoke existing user"
