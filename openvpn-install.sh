@@ -1152,6 +1152,9 @@ function revokeClient() {
 			fi
 		done
 		CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENTNUMBER"p)
+	elif [[ -z $1 || $1 =~ ^[0-9]+$ ]]; then
+		CLIENTNUMBER=$1
+		CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENTNUMBER"p)
 	else
 		CLIENT=$1
 	fi
